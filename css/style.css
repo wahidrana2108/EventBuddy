@@ -1,0 +1,124 @@
+/* Global styles */
+body {
+    font-family: 'Arial', sans-serif;
+}
+
+.hero-section {
+    background-color: #30373d;
+    color: white;
+    padding: 80px 0;
+}
+
+.hero-section h1 {
+    font-size: 50px;
+    margin-bottom: 20px;
+}
+
+.search-bar input {
+    padding: 10px;
+    border-radius: 25px 0 0 25px;
+    border: none;
+    width: 70%;
+}
+
+.search-bar button {
+    background-color: #39414b;
+    border: none;
+    border-radius: 0 25px 25px 0;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.stats-section {
+    background-color: #f4f4f4;
+}
+
+.stats-card {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.stats-card h3 {
+    font-size: 2rem;
+}
+
+.blogs-section .item .card {
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    overflow: hidden;
+    transition: transform 0.3s;
+}
+
+.blogs-section .item .card:hover {
+    transform: scale(1.05);
+}
+
+/* Hover effect for the stats cards */
+.hover-effect {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-effect:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.search-form {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 400px; /* Limit the width */
+}
+
+.search-input {
+    width: 100%;
+    padding: 10px 20px;
+    border-radius: 25px 0 0 25px; /* Rounded edges on the left */
+    border: 1px solid #ddd;
+    font-size: 16px;
+    height: 40px; /* Set the height to match the button */
+    transition: all 0.3s ease;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #363738; /* Blue border on focus */
+}
+
+.search-button {
+    background-color: gray; /* Background color for the button */
+    border: none;
+    color: white; /* Icon color */
+    padding: 0 20px; /* Adjust padding to center the icon */
+    border-radius: 0 25px 25px 0; /* Rounded edges on the right */
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 40px; /* Match the height of the input field */
+    transition: all 0.3s ease;
+}
+
+.search-button:hover {
+    background-color: darkgray; /* Darker gray on hover */
+}
+
+.search-button i {
+    font-size: 18px; /* Adjust icon size */
+}
+
+.glass-card {
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+    padding: 15px;
+}
+
+@media (max-width: 767px) {
+    .owl-nav {
+        display: none;
+    }
+}
