@@ -1,4 +1,13 @@
-<?php include("header.php") ?>
+<?php 
+include("header.php"); 
+
+// Example data
+$enrolledLine = '50 / 50'; // This should be dynamic based on your database or data source
+
+// Extract enrolled and total slots from the string
+list($enrolled, $totalSlots) = sscanf($enrolledLine, '%d / %d');
+$remaining = $totalSlots - $enrolled;
+?>
 
 <div class="container d-flex justify-content-center align-items-center mt-4">
     <div class="card glass-card border-0 shadow-lg" style="width: 500px;">
@@ -8,29 +17,16 @@
         <div class="card-body p-3 ">
             <p><strong>Event:</strong> Amazing Birthday Party</p>
             <p><strong>Location:</strong> Pabna</p>
-            <p><strong>Enrolled:</strong> 20 / 50</p>
-            <p><strong>Remaining:</strong> 30</p>
-            
-            <div class="d-flex align-items-center mb-2">
-                <div class="me-2">
-                    <label for="newCapacity" class="form-label text-muted">Edit Capacity:</label>
-                    <input type="number" class="form-control" id="newCapacity" placeholder="New capacity" min="5" max="500" style="width: 150px;">
-                    <div id="capacityError" class="text-danger mt-1" style="display: none;"></div>
-                </div>
-
-                <div>
-                    <label for="eventDate" class="form-label text-muted">Edit Event Date:</label>
-                    <input type="date" class="form-control" id="eventDate" placeholder="dd/mm/yyyy" style="width: 150px;">
-                    <div id="eventDateError" class="text-danger mt-1" style="display: none;">Event date must be at least tomorrow.</div>
-                </div>
-
-                <button class="btn btn-dark ms-2">Update</button>
-            </div>
+            <p><strong>Enrolled:</strong> <?php echo $enrolled; ?> / <?php echo $totalSlots; ?></p>
+            <p><strong>Remaining:</strong> <?php echo $remaining; ?></p>
             
             <div class="d-flex align-items-center mb-3">
                 <p><strong>Event Status:</strong> Running</p>
-                <button class="btn btn-warning ms-2">Hold</button>
-                <button class="btn btn-danger ms-2">Cancel</button>
+                <?php if ($remaining == 0): ?>
+                    <button class="btn btn-success ms-2" disabled>Enroll</button>
+                <?php else: ?>
+                    <button class="btn btn-success ms-2">Enroll</button>
+                <?php endif; ?>
             </div>
 
             <h5>Enrolled Users:</h5>
@@ -43,47 +39,4 @@
     </div>
 </div>
 
-<script>
-    const newCapacityField = document.getElementById('newCapacity');
-    const capacityError = document.getElementById('capacityError');
-    const eventDateField = document.getElementById('eventDate');
-    const eventDateError = document.getElementById('eventDateError');
-
-    function validateCapacity() {
-        const capacity = parseInt(newCapacityField.value, 10);
-
-        if (capacity < 5) {
-            capacityError.textContent = 'At least 5 participants are needed.';
-            capacityError.style.display = 'block';
-            return false;
-        } else if (capacity > 500) {
-            capacityError.textContent = 'Maximum capacity is 500. Please contact the organizer at +8801770888280.';
-            capacityError.style.display = 'block';
-            return false;
-        } else {
-            capacityError.style.display = 'none';
-            return true;
-        }
-    }
-
-    function validateDate() {
-        const today = new Date();
-        const selectedDate = new Date(eventDateField.value);
-
-        // Set today to 00:00:00 for comparison
-        today.setHours(0, 0, 0, 0);
-
-        if (selectedDate <= today) {
-            eventDateError.style.display = 'block';
-            return false;
-        } else {
-            eventDateError.style.display = 'none';
-            return true;
-        }
-    }
-
-    newCapacityField.addEventListener('input', validateCapacity);
-    eventDateField.addEventListener('input', validateDate);
-</script>
-
-<?php include("footer.php") ?>
+<?php include("footer.php"); ?>
