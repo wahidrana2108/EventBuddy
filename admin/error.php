@@ -9,7 +9,7 @@
             <h4 class="text-danger">Error 404</h4>
             <p class="text-muted">The page you are looking for might have been removed, had its name changed, or is temporarily unavailable.</p>
             <a href="index.php" class="btn btn-dark">Go to Homepage</a>
-            <a href="contact.php" class="btn btn-dark">Contact Support</a>
+            <a href="../contact.php" class="btn btn-dark">Contact Support</a>
         </div>
     </div>
 </div>

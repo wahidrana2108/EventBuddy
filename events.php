@@ -1,67 +1,56 @@
-<?php include("header.php") ?>
+<?php include("includes/header.php") ?>
 
-<div class="container mt-4">
+<div class="container d-flex justify-content-center align-items-center mt-4">
     <div class="card glass-card border-0 shadow-lg w-100">
         <div class="card-header bg-dark text-white text-center">
-            <h3 class="mb-0">All Events</h3>
+            <h3 class="mb-0">My Events</h3>
         </div>
         <div class="card-body p-3">
             <table class="table table-hover">
                 <thead>
                     <tr>
                         <th>Name</th>
+                        <th>Host</th>
                         <th>Enrolled</th>
-                        <th>Left</th>
                         <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php
-                        $eventsPerPage = 15;
-                        $totalEvents = // Get the total number of events from your database
-                        $totalPages = ceil($totalEvents / $eventsPerPage);
-
-                        $currentPage = isset($_GET['page']) ? $_GET['page'] : 1;
-                        $offset = ($currentPage - 1) * $eventsPerPage;
-
-                        $events = // Fetch the events for the current page from your database with limit $offset, $eventsPerPage
-
-                        foreach ($events as $event) {
-                            echo "<tr>
-                                    <td>{$event['name']}</td>
-                                    <td>{$event['enrolled']} / {$event['capacity']}</td>
-                                    <td id='daysRemaining{$event['id']}'></td>
-                                    <td><a href='event_details.php?id={$event['id']}' class='btn btn-dark'>Details</a></td>
-                                </tr>";
-                        }
-                    ?>
+                    <tr>
+                        <td>John's Birthday Bash</td>
+                        <td>John Doe</td>
+                        <td>35 / 50</td>
+                        <td><a href="event_details.php?id=1" class="btn btn-dark">Details</a></td>
+                    </tr>
+                    <tr>
+                        <td>Office Annual Party</td>
+                        <td>Jane Smith</td>
+                        <td>150 / 200</td>
+                        <td><a href="event_details.php?id=2" class="btn btn-dark">Details</a></td>
+                    </tr>
+                    <tr>
+                        <td>Wedding Ceremony</td>
+                        <td>Mark Lee</td>
+                        <td>90 / 100</td>
+                        <td><a href="event_details.php?id=3" class="btn btn-dark">Details</a></td>
+                    </tr>
+                    <tr>
+                        <td>Friends Reunion</td>
+                        <td>Emily Davis</td>
+                        <td>60 / 80</td>
+                        <td><a href="event_details.php?id=4" class="btn btn-dark">Details</a></td>
+                    </tr>
                 </tbody>
             </table>
-
-            <nav>
-                <ul class="pagination justify-content-center">
-                    <?php if ($currentPage > 1): ?>
-                        <li class="page-item">
-                            <a class="page-link" href="?page=<?= $currentPage - 1 ?>">Previous</a>
-                        </li>
-                    <?php endif; ?>
-
-                    <?php for ($i = 1; $i <= $totalPages; $i++): ?>
-                        <li class="page-item <?= $i == $currentPage ? 'active' : '' ?>">
-                            <a class="page-link" href="?page=<?= $i ?>"><?= $i ?></a>
-                        </li>
-                    <?php endfor; ?>
-
-                    <?php if ($currentPage < $totalPages): ?>
-                        <li class="page-item">
-                            <a class="page-link" href="?page=<?= $currentPage + 1 ?>">Next</a>
-                        </li>
-                    <?php endif; ?>
-                </ul>
-            </nav>
         </div>
     </div>
 </div>
+
+<style>
+    .table-hover tbody tr:hover {
+        background-color: #f5f5f5;
+    }
+</style>
 
 <script>
     function calculateRemainingDays(eventDate) {
@@ -72,11 +61,10 @@
         return diffDays > 0 ? diffDays : 0;
     }
 
-    <?php
-        foreach ($events as $event) {
-            echo "document.getElementById('daysRemaining{$event['id']}').textContent = calculateRemainingDays('{$event['date']}');";
-        }
-    ?>
+    document.getElementById('daysRemaining1').textContent = calculateRemainingDays('2025-01-15');
+    document.getElementById('daysRemaining2').textContent = calculateRemainingDays('2025-01-16');
+    document.getElementById('daysRemaining3').textContent = calculateRemainingDays('2025-01-17');
+    document.getElementById('daysRemaining4').textContent = calculateRemainingDays('2025-01-18');
 </script>
 
-<?php include("footer.php") ?>
+<?php include("includes/footer.php") ?>

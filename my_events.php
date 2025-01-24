@@ -1,4 +1,4 @@
-<?php include("header.php") ?>
+<?php include("includes/header.php") ?>
 
 <div class="container d-flex justify-content-center align-items-center mt-4">
     <div class="card glass-card border-0 shadow-lg w-100">
@@ -67,4 +67,4 @@
     document.getElementById('daysRemaining4').textContent = calculateRemainingDays('2025-01-18');
 </script>
 
-<?php include("footer.php") ?>
+<?php include("includes/footer.php") ?>

@@ -1,5 +1,5 @@
 <?php 
-include("header.php"); 
+include("includes/header.php"); 
 
 // Example data
 $enrolledLine = '50 / 50'; // This should be dynamic based on your database or data source
@@ -39,4 +39,4 @@ $remaining = $totalSlots - $enrolled;
     </div>
 </div>
 
-<?php include("footer.php"); ?>
+<?php include("includes/footer.php"); ?>

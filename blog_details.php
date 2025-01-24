@@ -1,4 +1,4 @@
-<?php include("header.php") ?>
+<?php include("includes/header.php") ?>
 
 <div class="container mt-4">
     <div class="card glass-card border-0 shadow-lg">
@@ -41,4 +41,4 @@
 </section>
 </div>
 
-<?php include("footer.php") ?>
+<?php include("includes/footer.php") ?>

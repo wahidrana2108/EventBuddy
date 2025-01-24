@@ -1,4 +1,4 @@
-<?php include("header.php"); ?>
+<?php include("includes/header.php"); ?>
 
 <div class="container my-5">
     <!-- Hero Section -->
@@ -114,4 +114,4 @@
     });
 </script>
 
-<?php include("footer.php"); ?>
+<?php include("includes/footer.php"); ?>
