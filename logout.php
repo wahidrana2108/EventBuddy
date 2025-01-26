@@ -1,1 +1,5 @@
-<a href="index.php">a</a>
+<?php 
+    session_start();
+    session_destroy();
+    echo "<script>window.open('index.php','_self')</script>";
+?>

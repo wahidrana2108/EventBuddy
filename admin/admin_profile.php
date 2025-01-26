@@ -11,7 +11,6 @@
             <p><strong>Full Name:</strong> John Doe</p>
             <p><strong>Email:</strong> john.doe@example.com</p>
             <p><strong>Phone Number:</strong> 0123456789</p>
-            <p><strong>Gender:</strong> Male</p>
             
             <h5 class="mt-4 mb-3">Update Password</h5>
             <form id="updatePasswordForm">

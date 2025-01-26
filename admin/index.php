@@ -38,6 +38,15 @@
                 </div>
             </div>
         </div>
+        <div class="col-md-3">
+            <div class="card bg-light text-dark mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Total Blogs</h5>
+                    <p class="card-text">15</p>
+                    <a href="admin_blogs.php" class="btn btn-primary">View Blogs</a>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="row mt-4">
