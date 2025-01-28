@@ -236,8 +236,9 @@
                     user_gender,
                     user_dp,
                     token,
-                    user_ip
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                    user_ip,
+                    registration_date
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, now())");
                 $stmt->bind_param(
                     "sssssssss", 
                     $firstName, 

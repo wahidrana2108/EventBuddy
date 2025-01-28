@@ -1,4 +1,4 @@
-<?php include("includes/header.php") ?>
+<?php include("includes/header.php"); ?>
 
 <div class="container d-flex justify-content-center align-items-center mt-4">
     <div class="card glass-card border-0 shadow-lg w-100">
@@ -22,30 +22,26 @@
                     </tr>
                 </thead>
                 <tbody id="eventsTable">
-                    <tr>
-                        <td>John's Birthday Bash</td>
-                        <td>John Doe</td>
-                        <td>35 / 50</td>
-                        <td><a href="event_details.php?id=1" class="btn btn-dark">Details</a></td>
-                    </tr>
-                    <tr>
-                        <td>Office Annual Party</td>
-                        <td>Jane Smith</td>
-                        <td>150 / 200</td>
-                        <td><a href="event_details.php?id=2" class="btn btn-dark">Details</a></td>
-                    </tr>
-                    <tr>
-                        <td>Wedding Ceremony</td>
-                        <td>Mark Lee</td>
-                        <td>90 / 100</td>
-                        <td><a href="event_details.php?id=3" class="btn btn-dark">Details</a></td>
-                    </tr>
-                    <tr>
-                        <td>Friends Reunion</td>
-                        <td>Emily Davis</td>
-                        <td>60 / 80</td>
-                        <td><a href="event_details.php?id=4" class="btn btn-dark">Details</a></td>
-                    </tr>
+                    <?php
+                    $sql = "SELECT event_id, event_name, host, max_capacity, DATE_FORMAT(event_date, '%Y-%m-%d') AS event_date FROM events";
+                    $result = $conn->query($sql);
+
+                    $events = array();
+
+                    if ($result->num_rows > 0) {
+                        while ($row = $result->fetch_assoc()) {
+                            $events[] = $row;
+                            echo "<tr>";
+                            echo "<td>" . htmlspecialchars($row["event_name"], ENT_QUOTES, 'UTF-8') . "</td>";
+                            echo "<td>" . htmlspecialchars($row["host"], ENT_QUOTES, 'UTF-8') . "</td>";
+                            echo "<td>" . $row["max_capacity"] . " / " . $row["max_capacity"] . "</td>";
+                            echo "<td><a href='event_details.php?id=" . $row["event_id"] . "' class='btn btn-dark'>Details</a></td>";
+                            echo "</tr>";
+                        }
+                    } else {
+                        echo "<tr><td colspan='4' class='text-center'>No events found.</td></tr>";
+                    }
+                    ?>
                 </tbody>
             </table>
         </div>
@@ -59,34 +55,16 @@
 </style>
 
 <script>
-    function calculateRemainingDays(eventDate) {
-        const today = new Date();
-        const event = new Date(eventDate);
-        const diffTime = event - today;
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        return diffDays > 0 ? diffDays : 0;
-    }
-
-    document.getElementById('daysRemaining1').textContent = calculateRemainingDays('2025-01-15');
-    document.getElementById('daysRemaining2').textContent = calculateRemainingDays('2025-01-16');
-    document.getElementById('daysRemaining3').textContent = calculateRemainingDays('2025-01-17');
-    document.getElementById('daysRemaining4').textContent = calculateRemainingDays('2025-01-18');
-
-    const events = [
-        { name: "John's Birthday Bash", host: "John Doe", enrolled: "35 / 50", date: "2025-01-15" },
-        { name: "Office Annual Party", host: "Jane Smith", enrolled: "150 / 200", date: "2025-01-16" },
-        { name: "Wedding Ceremony", host: "Mark Lee", enrolled: "90 / 100", date: "2025-01-17" },
-        { name: "Friends Reunion", host: "Emily Davis", enrolled: "60 / 80", date: "2025-01-18" }
-    ];
+    const events = <?php echo json_encode($events); ?>;
 
     document.getElementById('filter').addEventListener('change', function () {
         const filterValue = this.value;
         let sortedEvents;
 
         if (filterValue === 'name') {
-            sortedEvents = events.sort((a, b) => a.name.localeCompare(b.name));
+            sortedEvents = events.sort((a, b) => a.event_name.localeCompare(b.event_name));
         } else if (filterValue === 'date') {
-            sortedEvents = events.sort((a, b) => new Date(a.date) - new Date(b.date));
+            sortedEvents = events.sort((a, b) => new Date(a.event_date) - new Date(b.event_date));
         }
 
         const tableBody = document.getElementById('eventsTable');
@@ -94,14 +72,14 @@
 
         sortedEvents.forEach(event => {
             const row = `<tr>
-                <td>${event.name}</td>
+                <td>${event.event_name}</td>
                 <td>${event.host}</td>
-                <td>${event.enrolled}</td>
-                <td><a href="event_details.php?id=1" class="btn btn-dark">Details</a></td>
+                <td>${event.enrolled} / ${event.max_capacity}</td>
+                <td><a href="event_details.php?id=${event.event_id}" class="btn btn-dark">Details</a></td>
             </tr>`;
             tableBody.innerHTML += row;
         });
     });
 </script>
 
-<?php include("includes/footer.php") ?>
+<?php include("includes/footer.php"); ?>

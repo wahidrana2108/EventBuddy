@@ -8,33 +8,36 @@
                 <th scope="col">#</th>
                 <th scope="col">User Name</th>
                 <th scope="col">Email</th>
+                <th scope="col">Active</th>
                 <th scope="col">Registration Date</th>
                 <th scope="col">Actions</th>
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <th scope="row">1</th>
-                <td>John Doe</td>
-                <td>john@example.com</td>
-                <td>2025-01-15</td>
-                <td>
-                    <a href="view_user.php?id=1" class="btn btn-info btn-sm">View</a>
-                    <a href="edit_user.php?id=1" class="btn btn-warning btn-sm">Edit</a>
-                    <a href="delete_user.php?id=1" class="btn btn-danger btn-sm">Delete</a>
-                </td>
-            </tr>
-            <tr>
-                <th scope="row">2</th>
-                <td>Jane Smith</td>
-                <td>jane@example.com</td>
-                <td>2025-01-16</td>
-                <td>
-                    <a href="view_user.php?id=2" class="btn btn-info btn-sm">View</a>
-                    <a href="edit_user.php?id=2" class="btn btn-warning btn-sm">Edit</a>
-                    <a href="delete_user.php?id=2" class="btn btn-danger btn-sm">Delete</a>
-                </td>
-            </tr>
+            <?php
+            $sql = "SELECT user_id, CONCAT(first_name, ' ', last_name) AS user_name, user_email, active, registration_date FROM users";
+            $result = $conn->query($sql);
+
+            if ($result->num_rows > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    echo "<tr>";
+                    echo "<th scope='row'>" . $row["user_id"] . "</th>";
+                    echo "<td>" . $row["user_name"] . "</td>";
+                    echo "<td>" . $row["user_email"] . "</td>";
+                    echo "<td>" . ($row["active"]==1 ? 'Yes':'No') . "</td>";
+                    echo "<td>" . $row["registration_date"] . "</td>";
+                    echo "<td>";
+                    echo "<a href='edit_user.php?id=" . $row["user_id"] . "' class='btn btn-warning btn-sm'>Edit</a> ";
+                    echo "<a href='delete_user.php?id=" . $row["user_id"] . "' class='btn btn-danger btn-sm'>Delete</a>";
+                    echo "</td>";
+                    echo "</tr>";
+                }
+            } else {
+                echo "<tr><td colspan='5' class='text-center'>No users found.</td></tr>";
+            }
+
+            $conn->close();
+            ?>
         </tbody>
     </table>
     <a href="create_user.php" class="btn btn-primary">Create New User</a>

@@ -106,7 +106,7 @@
         move_uploaded_file($blog_image_tmp, "../img/banner/$blog_image");
 
         // Prepare the SQL statement
-        $stmt = $conn->prepare('INSERT INTO blogs (blog_name, blog_desc, blog_bann) VALUES (?, ?, ?)');
+        $stmt = $conn->prepare('INSERT INTO blogs (blog_name, blog_desc, blog_bann, registration_date) VALUES (?, ?, ?, now())');
         $stmt->bind_param('sss', $blog_name, $blog_desc, $blog_image);
 
         // Execute the statement

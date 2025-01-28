@@ -1,4 +1,6 @@
-<?php include("includes/header.php") ?>
+<?php include("includes/header.php");
+    session_start();
+?>
 
 <div class="container d-flex justify-content-center align-items-center mt-4">
     <div class="card glass-card border-0 shadow-lg" style="width: 500px;">
@@ -77,46 +79,43 @@
 
 
 <?php 
-if(isset($_POST['loginButton'])){   
-    $user_email = $_POST['email'];  
-    $user_pass = $_POST['password'];   
+    if(isset($_POST['loginButton'])) {
 
-    // Prepare a statement
-    $stmt = $conn->prepare("SELECT * FROM users WHERE user_email = ?");
-    $stmt->bind_param("s", $user_email); // "s" denotes the parameter is a string
+        $user_email = $_POST['email'];
+        $user_pass = $_POST['password'];
 
-    // Execute the statement
-    $stmt->execute();
-    $result = $stmt->get_result();
+        // Prepare a statement
+        $stmt = $conn->prepare("SELECT * FROM users WHERE user_email = ?");
+        $stmt->bind_param("s", $user_email);
 
-    // Check if user exists
-    if($result->num_rows == 1){
-        $row_user = $result->fetch_assoc();
-        
-        $user_email = $row_user['user_email'];
-        $user_pass_hash = $row_user['user_pass'];
-        $active = $row_user['active'];
+        // Execute the statement
+        $stmt->execute();
+        $result = $stmt->get_result();
 
-        // Verify password
-        if(password_verify($user_pass, $user_pass_hash)){
-            if($active == 1){
-                $_SESSION['user_email'] = $user_email;        
-                echo "<script>alert('You are Logged in Successfully!')</script>";          
-                echo "<script>window.open('index.php','_self')</script>";
+        if($result->num_rows == 1) {
+            $row_user = $result->fetch_assoc();
+            $user_email = $row_user['user_email'];
+            $user_pass_hash = $row_user['user_pass'];
+            $active = $row_user['active'];
+
+            if(password_verify($user_pass, $user_pass_hash)) {
+                if($active == 1) {
+                    session_regenerate_id(true); // Regenerate session ID to avoid session fixation
+                    $_SESSION['user_email'] = $user_email;
+                    echo "<script>alert('You are Logged in Successfully!')</script>";
+                    echo "<script>window.open('index.php','_self')</script>";
+                } else {
+                    echo "<script>alert('Verify your email first!')</script>";
+                    echo "<script>window.open('login.php','_self')</script>";
+                }
             } else {
-                echo "<script>alert('Verify your email first!')</script>";          
-                echo "<script>window.open('login.php','_self')</script>";
+                echo "<script>alert('Your email or password is wrong!')</script>";
             }
         } else {
-            echo "<script>alert('Your email or password is wrong!')</script>";      
+            echo "<script>alert('No account found with this email!')</script>";
         }
-    } else {
-        echo "<script>alert('No account found with this email!')</script>";
+        $stmt->close();
     }
 
-    // Close the statement
-    $stmt->close();
-}
-
-include("includes/footer.php"); 
+    include("includes/footer.php"); 
 ?>
