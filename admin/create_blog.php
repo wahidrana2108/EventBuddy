@@ -6,21 +6,21 @@
             <h3 class="mb-0">Create Blog</h3>
         </div>
         <div class="card-body p-3 ">
-            <form id="createBlogForm">
+            <form id="createBlogForm" method="post" enctype="multipart/form-data">
                 <div class="mb-2">
                     <label for="blogName" class="form-label text-muted">Blog Name</label>
-                    <input type="text" class="form-control" id="blogName" placeholder="Enter blog name" required>
+                    <input type="text" class="form-control" id="blogName" name="blogName" placeholder="Enter blog name" required>
                 </div>
                 <div class="mb-2">
                     <label for="blogDescription" class="form-label text-muted">Description</label>
-                    <textarea class="form-control" id="blogDescription" placeholder="Enter blog description" required></textarea>
+                    <textarea class="form-control" id="blogDescription" name="blogDescription" placeholder="Enter blog description" required></textarea>
                 </div>
                 <div class="mb-2">
                     <label for="bannerPicture" class="form-label text-muted">Banner Picture</label>
-                    <input type="file" class="form-control" id="bannerPicture" required>
+                    <input type="file" class="form-control" id="bannerPicture" name="bannerPicture" required>
                     <div id="bannerPictureError" class="text-danger mt-1" style="display: none;"></div>
                 </div>
-                <button type="submit" id="submitButton" class="btn btn-dark w-100" disabled>Create</button>
+                <button type="submit" id="submitButton" name="submitButton" class="btn btn-dark w-100" disabled>Create</button>
             </form>
         </div>
     </div>
@@ -55,19 +55,18 @@
             img.onload = function() {
                 if (img.width === 600 && img.height === 300) {
                     bannerPictureError.style.display = 'none';
-                    return true;
+                    validateForm();  // Call validateForm after successful image loading
                 } else {
                     bannerPictureError.style.display = 'block';
                     bannerPictureError.textContent = 'Image dimensions must be 600x300 pixels.';
-                    return false;
                 }
             };
             img.onerror = function() {
                 bannerPictureError.style.display = 'block';
                 bannerPictureError.textContent = 'Invalid image file.';
-                return false;
             };
             img.src = URL.createObjectURL(file);
+            return false;
         } else {
             bannerPictureError.style.display = 'block';
             bannerPictureError.textContent = 'Please upload a banner picture.';
@@ -79,8 +78,7 @@
         const isFormValid =
             blogNameField.value &&
             blogDescriptionField.value &&
-            bannerPictureField.value &&
-            validateBannerPicture();
+            bannerPictureField.files[0];
 
         submitButton.disabled = !isFormValid;
     }
@@ -89,11 +87,37 @@
     blogDescriptionField.addEventListener('input', validateForm);
     bannerPictureField.addEventListener('change', () => {
         validateBannerPicture();
-        validateForm();
     });
 
     // Initialize validation
     window.onload = validateForm;
 </script>
 
-<?php include("includes/footer.php") ?>
+
+<?php include("includes/footer.php");
+
+    if(isset($_POST["submitButton"])) {
+        $blog_name = $_POST['blogName'];
+        $blog_desc = $_POST['blogDescription'];
+        $blog_image = $_FILES['bannerPicture']['name'];
+        $blog_image_tmp = $_FILES['bannerPicture']['tmp_name'];
+
+        // Move the uploaded file to the target directory
+        move_uploaded_file($blog_image_tmp, "../img/banner/$blog_image");
+
+        // Prepare the SQL statement
+        $stmt = $conn->prepare('INSERT INTO blogs (blog_name, blog_desc, blog_bann) VALUES (?, ?, ?)');
+        $stmt->bind_param('sss', $blog_name, $blog_desc, $blog_image);
+
+        // Execute the statement
+        if ($stmt->execute()) {
+            echo "<script>alert('Blog successfully uploaded!')</script>";
+            echo "<script>window.location.href='create_blog.php'</script>";
+        } else {
+            echo "<script>alert('Error uploading blog: " . $stmt->error . "')</script>";
+        }
+
+        // Close the statement
+        $stmt->close();
+    }
+?>

@@ -6,22 +6,22 @@
             <h3 class="mb-0">Admin Login</h3>
         </div>
         <div class="card-body p-3">
-            <form id="adminLoginForm">
+            <form id="adminLoginForm"  method="post" enctype="multipart/form-data">
                 <div class="mb-2">
                     <label for="adminEmail" class="form-label text-muted">Email Address</label>
-                    <input type="email" class="form-control" id="adminEmail" placeholder="Enter your email" required>
+                    <input type="email" class="form-control" id="adminEmail" name="adminEmail" placeholder="Enter your email" required>
                     <div id="adminEmailError" class="text-danger mt-1" style="display: none;">Please enter a valid email (Google, Microsoft, Yahoo only).</div>
                 </div>
                 <div class="mb-2">
                     <label for="adminPassword" class="form-label text-muted">Password</label>
-                    <input type="password" class="form-control" id="adminPassword" placeholder="Enter your password" required>
+                    <input type="password" class="form-control" id="adminPassword" name="adminPassword" placeholder="Enter your password" required>
                     <div id="adminPasswordError" class="text-danger mt-1" style="display: none;">Password must be between 8 to 12 characters.</div>
                 </div>
                 <div class="form-check mb-2">
                     <input type="checkbox" class="form-check-input" id="adminRememberMe">
                     <label class="form-check-label text-muted" for="adminRememberMe">Remember Me</label>
                 </div>
-                <button type="submit" id="adminLoginButton" class="btn btn-dark w-100" disabled>Login</button>
+                <button type="submit" id="adminLoginButton" name="adminLoginButton" class="btn btn-dark w-100" disabled>Login</button>
             </form>
             <div class="text-center mt-2">
                 <a href="admin_forgot.php" class="text-decoration-none text-dark">Forgot Password?</a>
@@ -75,4 +75,47 @@
     window.onload = validateAdminForm;
 </script>
 
-<?php include("includes/footer.php") ?>
+<?php
+include("includes/footer.php");
+
+if (isset($_POST['adminLoginButton'])) {   
+    $adminEmail = $_POST['adminEmail'];  
+    $adminPassword = $_POST['adminPassword'];   
+
+    // Prepare a statement
+    $stmt = $conn->prepare("SELECT * FROM admin WHERE admin_email = ?");
+    $stmt->bind_param("s", $adminEmail); // "s" denotes the parameter is a string
+
+    // Execute the statement
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    // Check if user exists
+    if ($result->num_rows == 1) {
+        $row_user = $result->fetch_assoc();
+        
+        $adminEmail = $row_user['admin_email'];
+        $adminPassword_hash = $row_user['admin_password'];
+        $active = $row_user['active'];
+
+        // Verify password
+        if (password_verify($adminPassword, $adminPassword_hash)) {
+            if ($active == 1) {
+                $_SESSION['adminEmail'] = $adminEmail;        
+                echo "<script>alert('You are Logged in Successfully!')</script>";          
+                echo "<script>window.open('index.php','_self')</script>";
+            } else {
+                echo "<script>alert('Contact the authority to activate account!')</script>";          
+                echo "<script>window.open('login.php','_self')</script>";
+            }
+        } else {
+            echo "<script>alert('Your email or password is incorrect!')</script>";      
+        }
+    } else {
+        echo "<script>alert('No account found with this email!')</script>";
+    }
+
+    // Close the statement
+    $stmt->close();
+}
+?>

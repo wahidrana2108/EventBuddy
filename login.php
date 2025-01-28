@@ -24,7 +24,7 @@
                 <button type="submit" id="loginButton" name="loginButton" class="btn btn-dark w-100" disabled>Login</button>
             </form>
             <div class="text-center mt-2">
-                <a href="forgot.php" class="text-decoration-none text-dark">Forgot Password?</a>
+                <a href="forget_password.php" class="text-decoration-none text-dark">Forgot Password?</a>
             </div>
         </div>
         <div class="card-footer text-center p-2">

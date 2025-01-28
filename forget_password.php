@@ -144,15 +144,15 @@
         $get_ip = getRealIpUser();
 
         if($password == $confirmPassword){
-            $password = password_hash($password, PASSWORD_DEFAULT);
+            $password_hash = password_hash($password, PASSWORD_DEFAULT);
 
             if($check_user==0){
                 echo "<script>alert('No User Found!')</script>";
                 echo "<script>window.open('forget_password.php','_self')</script>";
             }
             else{
-                $stmt = $conn->prepare("UPDATE users SET token=? WHERE user_id=?");
-                $stmt->bind_param("si", $token, $user_id);
+                $stmt = $conn->prepare("UPDATE users SET user_pass=?, token=? WHERE user_id=?");
+                $stmt->bind_param("ssi", $password_hash,$token, $user_id);
                 $stmt->execute();
 
                 try {
