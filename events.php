@@ -1,9 +1,17 @@
-<?php include("includes/header.php"); ?>
+<?php 
+include("includes/header.php");
+session_start();
+// Check if the user is logged in
+if (!isset($_SESSION['user_email'])) {
+    header("Location: login.php");
+    exit();
+}
+?>
 
 <div class="container d-flex justify-content-center align-items-center mt-4">
     <div class="card glass-card border-0 shadow-lg w-100">
         <div class="card-header bg-dark text-white text-center">
-            <h3 class="mb-0">My Events</h3>
+            <h3 class="mb-0">Events</h3>
         </div>
         <div class="card-body p-3">
             <div class="d-flex justify-content-end mb-3">
@@ -23,9 +31,22 @@
                 </thead>
                 <tbody id="eventsTable">
                     <?php
-                    $sql = "SELECT event_id, event_name, host, max_capacity, DATE_FORMAT(event_date, '%Y-%m-%d') AS event_date FROM events";
+                    // Fetching event details including host and enrollment count
+                    $sql = "
+                    SELECT 
+                        events.event_id, 
+                        events.event_name, 
+                        users.first_name AS host_first_name, 
+                        users.last_name AS host_last_name, 
+                        events.capacity AS max_capacity, 
+                        COUNT(event_enrollments.enrollment_id) AS enrolled, 
+                        DATE_FORMAT(events.event_date, '%Y-%m-%d') AS event_date 
+                    FROM events 
+                    JOIN users ON events.host_id = users.user_id 
+                    LEFT JOIN event_enrollments ON events.event_id = event_enrollments.event_id 
+                    GROUP BY events.event_id, events.event_name, users.first_name, users.last_name, events.capacity, events.event_date";
+                    
                     $result = $conn->query($sql);
-
                     $events = array();
 
                     if ($result->num_rows > 0) {
@@ -33,8 +54,8 @@
                             $events[] = $row;
                             echo "<tr>";
                             echo "<td>" . htmlspecialchars($row["event_name"], ENT_QUOTES, 'UTF-8') . "</td>";
-                            echo "<td>" . htmlspecialchars($row["host"], ENT_QUOTES, 'UTF-8') . "</td>";
-                            echo "<td>" . $row["max_capacity"] . " / " . $row["max_capacity"] . "</td>";
+                            echo "<td>" . htmlspecialchars($row["host_first_name"] . ' ' . $row["host_last_name"], ENT_QUOTES, 'UTF-8') . "</td>";
+                            echo "<td>" . $row["enrolled"] . " / " . $row["max_capacity"] . "</td>";
                             echo "<td><a href='event_details.php?id=" . $row["event_id"] . "' class='btn btn-dark'>Details</a></td>";
                             echo "</tr>";
                         }
@@ -73,7 +94,7 @@
         sortedEvents.forEach(event => {
             const row = `<tr>
                 <td>${event.event_name}</td>
-                <td>${event.host}</td>
+                <td>${event.host_first_name} ${event.host_last_name}</td>
                 <td>${event.enrolled} / ${event.max_capacity}</td>
                 <td><a href="event_details.php?id=${event.event_id}" class="btn btn-dark">Details</a></td>
             </tr>`;

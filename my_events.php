@@ -1,4 +1,21 @@
-<?php include("includes/header.php") ?>
+<?php 
+include("includes/header.php");
+session_start();
+
+
+// Get the logged-in user's email
+$user_email = $_SESSION['user_email'];
+
+// Fetch the logged-in user's ID
+$userQuery = "SELECT user_id FROM users WHERE user_email = ?";
+$stmt = $conn->prepare($userQuery);
+$stmt->bind_param("s", $user_email);
+$stmt->execute();
+$userResult = $stmt->get_result();
+$userData = $userResult->fetch_assoc();
+$user_id = $userData['user_id'];
+
+?>
 
 <div class="container d-flex justify-content-center align-items-center mt-4">
     <div class="card glass-card border-0 shadow-lg w-100">
@@ -15,31 +32,42 @@
                         <th>Action</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr>
-                        <td>John's Birthday Bash</td>
-                        <td>35 / 50</td>
-                        <td id="daysRemaining1"></td>
-                        <td><a href="event_details.php?id=1" class="btn btn-dark">Details</a></td>
-                    </tr>
-                    <tr>
-                        <td>Office Annual Party</td>
-                        <td>150 / 200</td>
-                        <td id="daysRemaining2"></td>
-                        <td><a href="event_details.php?id=2" class="btn btn-dark">Details</a></td>
-                    </tr>
-                    <tr>
-                        <td>Wedding Ceremony</td>
-                        <td>90 / 100</td>
-                        <td id="daysRemaining3"></td>
-                        <td><a href="event_details.php?id=3" class="btn btn-dark">Details</a></td>
-                    </tr>
-                    <tr>
-                        <td>Friends Reunion</td>
-                        <td>60 / 80</td>
-                        <td id="daysRemaining4"></td>
-                        <td><a href="event_details.php?id=4" class="btn btn-dark">Details</a></td>
-                    </tr>
+                <tbody id="eventsTable">
+                    <?php
+                    // Fetching event details including host and enrollment count for the logged-in user
+                    $sql = "
+                    SELECT 
+                        events.event_id, 
+                        events.event_name, 
+                        events.capacity AS max_capacity, 
+                        COUNT(event_enrollments.enrollment_id) AS enrolled, 
+                        DATE_FORMAT(events.event_date, '%Y-%m-%d') AS event_date 
+                    FROM events 
+                    LEFT JOIN event_enrollments ON events.event_id = event_enrollments.event_id 
+                    WHERE events.host_id = ?
+                    GROUP BY events.event_id, events.event_name, events.capacity, events.event_date";
+
+                    $stmt = $conn->prepare($sql);
+                    $stmt->bind_param("i", $user_id);
+                    $stmt->execute();
+                    $result = $stmt->get_result();
+                    $events = array();
+
+                    if ($result->num_rows > 0) {
+                        while ($row = $result->fetch_assoc()) {
+                            $events[] = $row;
+                            $remaining = $row["max_capacity"] - $row["enrolled"];
+                            echo "<tr>";
+                            echo "<td>" . htmlspecialchars($row["event_name"], ENT_QUOTES, 'UTF-8') . "</td>";
+                            echo "<td>" . $row["enrolled"] . " / " . $row["max_capacity"] . "</td>";
+                            echo "<td>" . $remaining . "</td>";
+                            echo "<td><a href='event_details.php?id=" . $row["event_id"] . "' class='btn btn-dark'>Details</a></td>";
+                            echo "</tr>";
+                        }
+                    } else {
+                        echo "<tr><td colspan='4' class='text-center'>No events found.</td></tr>";
+                    }
+                    ?>
                 </tbody>
             </table>
         </div>
@@ -61,10 +89,11 @@
         return diffDays > 0 ? diffDays : 0;
     }
 
-    document.getElementById('daysRemaining1').textContent = calculateRemainingDays('2025-01-15');
-    document.getElementById('daysRemaining2').textContent = calculateRemainingDays('2025-01-16');
-    document.getElementById('daysRemaining3').textContent = calculateRemainingDays('2025-01-17');
-    document.getElementById('daysRemaining4').textContent = calculateRemainingDays('2025-01-18');
+    const events = <?php echo json_encode($events); ?>;
+
+    events.forEach(event => {
+        document.getElementById('daysRemaining' + event.event_id).textContent = calculateRemainingDays(event.event_date);
+    });
 </script>
 
-<?php include("includes/footer.php") ?>
+<?php include("includes/footer.php"); ?>

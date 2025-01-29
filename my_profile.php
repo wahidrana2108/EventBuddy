@@ -34,7 +34,7 @@ $user_query->close();
             <p><strong>Gender:</strong> <?php echo htmlspecialchars($user_gender, ENT_QUOTES, 'UTF-8'); ?></p>
             
             <h5 class="mt-4 mb-3">Update Password</h5>
-            <form method="POST">
+            <form method="post" enctype="multipart/form-data">
                 <div class="mb-2">
                     <label for="currentPassword" class="form-label text-muted">Current Password</label>
                     <input type="password" class="form-control" id="currentPassword" name="currentPassword" placeholder="Enter current password" required>
