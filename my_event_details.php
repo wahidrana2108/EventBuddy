@@ -1,7 +1,10 @@
 <?php 
 include("includes/header.php");
-session_start();
-
+// Check if the user is logged in
+if (!isset($_SESSION['user_email'])) {
+    header("Location: login.php");
+    exit();
+}
 // Check if the event ID is provided
 if (!isset($_GET['id']) || empty($_GET['id'])) {
     die("Error: Event ID is required.");
@@ -84,9 +87,9 @@ $conn->close();
             </form>
 
             <div class="d-flex align-items-center mb-3">
-                <p><strong>Event Status:</strong> <?php echo htmlspecialchars($status, ENT_QUOTES, 'UTF-8'); ?></p>
-                <button class="btn btn-warning ms-2">Hold</button>
-                <button class="btn btn-danger ms-2">Cancel</button>
+                <p><strong>Event Status:</strong> <span id="eventStatus"><?php echo htmlspecialchars($status, ENT_QUOTES, 'UTF-8'); ?></span></p>
+                <button class="btn btn-warning ms-2" id="holdButton">Hold</button>
+                <button class="btn btn-danger ms-2" id="cancelButton">Cancel</button>
             </div>
 
             <h5>Enrolled Users:</h5>
@@ -106,6 +109,9 @@ $conn->close();
     const eventDateError = document.getElementById('eventDateError');
     const updateButton = document.getElementById('updateButton');
     const updateEventForm = document.getElementById('updateEventForm');
+    const holdButton = document.getElementById('holdButton');
+    const cancelButton = document.getElementById('cancelButton');
+    const eventStatus = document.getElementById('eventStatus');
 
     function validateCapacity() {
         const capacity = parseInt(newCapacityField.value, 10);
@@ -149,6 +155,50 @@ $conn->close();
 
     newCapacityField.addEventListener('input', validateForm);
     eventDateField.addEventListener('input', validateForm);
+
+    holdButton.addEventListener('click', function() {
+        let newStatus = '';
+        if (eventStatus.textContent === 'Hold') {
+            newStatus = 'Run';
+        } else {
+            newStatus = 'Hold';
+        }
+
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', 'update_status.php', true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                eventStatus.textContent = newStatus;
+                holdButton.textContent = newStatus === 'Hold' ? 'Run' : 'Hold';
+            } else {
+                alert('Failed to update status.');
+            }
+        };
+        xhr.send('event_id=<?php echo $event_id; ?>&status=' + newStatus);
+    });
+
+    cancelButton.addEventListener('click', function() {
+        let newStatus = '';
+        if (eventStatus.textContent === 'Cancelled') {
+            newStatus = 'Run';
+        } else {
+            newStatus = 'Cancelled';
+        }
+
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', 'update_status.php', true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                eventStatus.textContent = newStatus;
+                cancelButton.textContent = newStatus === 'Cancelled' ? 'Reactivate' : 'Cancel';
+            } else {
+                alert('Failed to update status.');
+            }
+        };
+        xhr.send('event_id=<?php echo $event_id; ?>&status=' + newStatus);
+    });
 </script>
 
 <?php include("includes/footer.php"); ?>

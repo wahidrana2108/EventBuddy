@@ -1,4 +1,11 @@
-<?php include("includes/header.php") ?>
+<?php 
+    include("includes/header.php"); 
+        // Check if the user is logged in
+        if (isset($_SESSION['user_email'])) {
+            header("Location: index.php");
+            exit();
+        }
+?>
 
 <div class="container d-flex justify-content-center align-items-center mt-4">
     <div class="card glass-card border-0 shadow-lg" style="width: 500px;">

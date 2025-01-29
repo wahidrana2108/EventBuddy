@@ -169,7 +169,7 @@
                   
                     $mail->isHTML(true);                                  
                     $mail->Subject = 'Request for password reset';
-                    $mail->Body = 'click the link to recover your password. <a href="http://localhost:3000/update.php?email=' . $email . '&token=' . $token . '&hash=' . $password . '"> Click here</a>';
+                    $mail->Body = 'click the link to recover your password. <a href="http://localhost:3000/update.php?email=' . $email . '&token=' . $token . '&hash=' . $password_hash . '"> Click here</a>';
                   
                     $mail->send();
                     $output =  'Message has been sent';

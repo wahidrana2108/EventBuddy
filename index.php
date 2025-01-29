@@ -1,4 +1,14 @@
-<?php include("includes/header.php"); ?>
+<?php 
+        include("includes/header.php"); 
+
+       // Fetch blog data
+       $blogs = [];
+       $query = "SELECT blog_id, blog_name, blog_bann, upload_date FROM blogs";
+       $result = mysqli_query($conn, $query);
+       while ($row = mysqli_fetch_assoc($result)) {
+           $blogs[] = $row;
+       }
+?>
 
 <!-- Hero Section -->
 <section class="hero-section text-center py-5">
@@ -59,26 +69,17 @@
     <h2 class="text-center">Our Latest Blogs</h2>
     <div class="container mt-3">
         <div class="owl-carousel owl-theme">
-            <div class="item">
-                <div class="card bg-light shadow-sm p-3">
-                    <img src="img/banner/blog1.png" class="card-img-top rounded" alt="Blog 1">
-                    <div class="card-body">
-                        <h5 class="card-title">How to Plan the Perfect Event</h5>
-                        <p class="card-text">Discover tips and tricks to organize the most memorable events with ease.</p>
-                        <a href="blog_details.php?id=2" class="btn btn-secondary btn-sm">Read More</a>
+            <?php foreach ($blogs as $blog): ?>
+                <div class="item">
+                    <div class="card bg-light shadow-sm p-3">
+                        <img src="img/banner/<?php echo $blog['blog_bann']; ?>" class="card-img-top rounded" alt="<?php echo $blog['blog_name']; ?>">
+                        <div class="card-body">
+                            <h5 class="card-title"><?php echo $blog['blog_name']; ?></h5>
+                            <p class="text-muted">Posted on: <?php echo date('Y-m-d', strtotime($blog['upload_date'])); ?></p>                            <a href="blog_details.php?id=<?php echo $blog['blog_id']; ?>" class="btn btn-secondary btn-sm">Read More</a>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="item">
-                <div class="card bg-light shadow-sm p-3">
-                    <img src="img/banner/blog1.png" class="card-img-top rounded" alt="Blog 2">
-                    <div class="card-body">
-                        <h5 class="card-title">Top 5 Event Venues in 2025</h5>
-                        <p class="card-text">Explore the best venues for hosting events in 2025.</p>
-                        <a href="blog_details.php?id=2" class="btn btn-secondary btn-sm">Read More</a>
-                    </div>
-                </div>
-            </div>
+            <?php endforeach; ?>
         </div>
     </div>
 </section>

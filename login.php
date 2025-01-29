@@ -1,5 +1,9 @@
 <?php include("includes/header.php");
-    session_start();
+    // Check if the user is logged in
+    if (isset($_SESSION['user_email'])) {
+        header("Location: index.php");
+        exit();
+    }
 ?>
 
 <div class="container d-flex justify-content-center align-items-center mt-4">

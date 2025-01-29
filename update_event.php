@@ -1,7 +1,6 @@
 <?php
 // update_event.php
 include("includes/header.php");
-session_start();
 
 // Check if the event ID is provided
 if (!isset($_GET['id']) || empty($_GET['id'])) {

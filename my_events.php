@@ -1,7 +1,10 @@
 <?php 
 include("includes/header.php");
-session_start();
-
+// Check if the user is logged in
+if (!isset($_SESSION['user_email'])) {
+    header("Location: login.php");
+    exit();
+}
 
 // Get the logged-in user's email
 $user_email = $_SESSION['user_email'];
