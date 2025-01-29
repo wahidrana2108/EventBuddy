@@ -61,7 +61,7 @@ $user_id = $userData['user_id'];
                             echo "<td>" . htmlspecialchars($row["event_name"], ENT_QUOTES, 'UTF-8') . "</td>";
                             echo "<td>" . $row["enrolled"] . " / " . $row["max_capacity"] . "</td>";
                             echo "<td>" . $remaining . "</td>";
-                            echo "<td><a href='event_details.php?id=" . $row["event_id"] . "' class='btn btn-dark'>Details</a></td>";
+                            echo "<td><a href='my_event_details.php?id=" . $row["event_id"] . "' class='btn btn-dark'>Details</a></td>";
                             echo "</tr>";
                         }
                     } else {
