@@ -11,6 +11,7 @@
         // Execute the statement
         if ($stmt->execute()) {
             echo "<script>alert('Blog deleted successfully!');</script>";
+            echo "<script>window.location.href='blogs.php'</script>";
         } else {
             echo "<script>alert('Error deleting blog: " . $stmt->error . "');</script>";
         }

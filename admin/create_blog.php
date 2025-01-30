@@ -1,4 +1,11 @@
-<?php include("includes/header.php") ?>
+<?php 
+    include("includes/header.php");
+    // Check if the user is logged in
+    if (!isset($_SESSION['adminEmail'])) {
+        header("Location: login.php");
+        exit();
+    }
+?>
 
 <div class="container d-flex justify-content-center align-items-center mt-4">
     <div class="card glass-card border-0 shadow-lg" style="width: 500px;">
@@ -106,7 +113,7 @@
         move_uploaded_file($blog_image_tmp, "../img/banner/$blog_image");
 
         // Prepare the SQL statement
-        $stmt = $conn->prepare('INSERT INTO blogs (blog_name, blog_desc, blog_bann, registration_date) VALUES (?, ?, ?, now())');
+        $stmt = $conn->prepare('INSERT INTO blogs (blog_name, blog_desc, blog_bann, upload_date) VALUES (?, ?, ?, now())');
         $stmt->bind_param('sss', $blog_name, $blog_desc, $blog_image);
 
         // Execute the statement

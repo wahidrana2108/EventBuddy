@@ -1,6 +1,12 @@
 <?php
     include("includes/header.php");
 
+        // Check if the user is logged in
+        if (!isset($_SESSION['adminEmail'])) {
+            header("Location: login.php");
+            exit();
+        }
+
     $adminEmail = $_SESSION['adminEmail']; // Assuming you store adminEmail in session after login
 
     $stmt = $conn->prepare("SELECT * FROM admin WHERE admin_email = ?");
@@ -25,7 +31,7 @@
         </div>
         <div class="card-body p-3">
             <h5 class="mb-3">Profile Details</h5>
-            <p><strong>Profile Picture:</strong> <img src="<?php echo $adminDp; ?>" alt="Profile Picture" class="img-thumbnail" style="width: 100px;"></p>
+            <p><strong>Profile Picture:</strong> <img src="img/users/<?php echo $adminDp; ?>" alt="Profile Picture" class="img-thumbnail" style="width: 100px;"></p>
             <p><strong>Full Name:</strong> <?php echo $adminName; ?></p>
             <p><strong>Email:</strong> <?php echo $adminEmail; ?></p>
             <p><strong>Phone Number:</strong> <?php echo $adminPhn; ?></p>

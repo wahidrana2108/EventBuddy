@@ -1,16 +1,25 @@
 <?php
     include("includes/db.php");
     session_start();
-
-function getRealIpUser(){
-    switch(true){    
-            case(!empty($_SERVER['HTTP_X_REAL_IP'])) : return $_SERVER['HTTP_X_REAL_IP'];
-            case(!empty($_SERVER['HTTP_CLIENT_IP'])) : return $_SERVER['HTTP_CLIENT_IP'];
-            case(!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) : return $_SERVER['HTTP_X_FORWARDED_FOR'];
-            
-            default : return $_SERVER['REMOTE_ADDR'];
+    function getRealIpUser(){
+        switch(true){    
+                case(!empty($_SERVER['HTTP_X_REAL_IP'])) : return $_SERVER['HTTP_X_REAL_IP'];
+                case(!empty($_SERVER['HTTP_CLIENT_IP'])) : return $_SERVER['HTTP_CLIENT_IP'];
+                case(!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) : return $_SERVER['HTTP_X_FORWARDED_FOR'];
+                
+                default : return $_SERVER['REMOTE_ADDR'];
+        }
     }
-}
+
+    if(isset($_SESSION['adminEmail'])) {
+        $admin_email = $_SESSION['adminEmail'];
+        $stmt = $conn->prepare("SELECT admin_dp FROM admin WHERE admin_email = ?");
+        $stmt->bind_param("s", $admin_email);
+        $stmt->execute();
+        $stmt->bind_result($admin_dp);
+        $stmt->fetch();
+        $stmt->close();
+    }
 ?>
 
 <!DOCTYPE html>
@@ -48,12 +57,30 @@ function getRealIpUser(){
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <img src="img/user.png" alt="Profile Picture" class="profile-picture me-2">
+                            <?php
+                                if(!isset($_SESSION['adminEmail'])) {
+                                    echo'<img src="img/user.png" alt="Profile Picture" class="profile-picture me-2" style="width: 45px; height: 45px; border-radius: 50%;">';
+                                }
+                                else {
+                                    echo'<img src="img/users/'.$admin_dp.'" alt="Profile Picture" class="profile-picture me-2" style="width: 45px; height: 45px; border-radius: 50%;">';
+                                }
+                            ?>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
-                            <li><a class="dropdown-item" href="admin_profile.php">Profile</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="admin_logout.php">Logout</a></li>
+                            <?php
+                                    if(isset($_SESSION['adminEmail'])) {
+                                        echo"
+                                            <li><a class='dropdown-item' href='admin_profile.php'>My Profile</a></li>
+                                            <li><hr class='dropdown-divider'></li>
+                                            <li><a class='dropdown-item' href='logout.php'>Logout</a></li>
+                                        ";
+                                    }
+                                    else {
+                                        echo"
+                                            <li><a class='dropdown-item' href='login.php'>Login</a></li>
+                                        ";
+                                    }
+                            ?>
                         </ul>
                     </li>
                 </ul>

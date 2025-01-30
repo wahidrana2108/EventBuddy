@@ -1,4 +1,12 @@
-<?php include("includes/header.php") ?>
+<?php
+    include("includes/header.php");
+    
+    // Check if the user is logged in
+    if (isset($_SESSION['adminEmail'])) {
+        header("Location: index.php");
+        exit();
+    }
+?>
 
 <div class="container d-flex justify-content-center align-items-center mt-4">
     <div class="card glass-card border-0 shadow-lg" style="width: 500px;">
@@ -101,6 +109,7 @@ if (isset($_POST['adminLoginButton'])) {
         // Verify password
         if (password_verify($adminPassword, $adminPassword_hash)) {
             if ($active == 1) {
+                session_regenerate_id(true); // Regenerate session ID to avoid session fixation
                 $_SESSION['adminEmail'] = $adminEmail;        
                 echo "<script>alert('You are Logged in Successfully!')</script>";          
                 echo "<script>window.open('index.php','_self')</script>";

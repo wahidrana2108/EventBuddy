@@ -1,4 +1,12 @@
-<?php include("includes/header.php"); ?>
+<?php 
+    include("includes/header.php");
+
+    // Check if the user is logged in
+    if (!isset($_SESSION['adminEmail'])) {
+        header("Location: login.php");
+        exit();
+    }
+?>
 
 <div class="container mt-4">
     <h2 class="mb-4">Manage Blogs</h2>

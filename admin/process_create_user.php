@@ -2,6 +2,12 @@
     // Include database connection
     include("includes/db.php");
 
+    // Check if the user is logged in
+    if (!isset($_SESSION['adminEmail'])) {
+        header("Location: login.php");
+        exit();
+    }
+
     // Capture form data
     $userName = $_POST['userName'];
     $userEmail = $_POST['userEmail'];

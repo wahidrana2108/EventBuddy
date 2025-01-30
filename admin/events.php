@@ -1,4 +1,13 @@
-<?php include("includes/header.php"); ?>
+<?php 
+include("includes/header.php"); 
+
+// Check if the user is logged in
+if (!isset($_SESSION['adminEmail'])) {
+    header("Location: login.php");
+    exit();
+}
+
+?>
 
 <div class="container mt-4">
     <h2 class="mb-4">Manage Events</h2>
@@ -14,33 +23,36 @@
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <th scope="row">1</th>
-                <td>Amazing Birthday Party</td>
-                <td>2025-01-15</td>
-                <td>Pabna</td>
-                <td>Running</td>
-                <td>
-                    <a href="view_event.php?id=1" class="btn btn-info btn-sm">View</a>
-                    <a href="edit_event.php?id=1" class="btn btn-warning btn-sm">Edit</a>
-                    <a href="delete_event.php?id=1" class="btn btn-danger btn-sm">Delete</a>
-                </td>
-            </tr>
-            <tr>
-                <th scope="row">2</th>
-                <td>Corporate Meeting</td>
-                <td>2025-01-20</td>
-                <td>Dhaka</td>
-                <td>Upcoming</td>
-                <td>
-                    <a href="view_event.php?id=2" class="btn btn-info btn-sm">View</a>
-                    <a href="edit_event.php?id=2" class="btn btn-warning btn-sm">Edit</a>
-                    <a href="delete_event.php?id=2" class="btn btn-danger btn-sm">Delete</a>
-                </td>
-            </tr>
+            <?php
+            // Fetch events data
+            $query = "SELECT event_id, event_name, event_date, event_place, status FROM events ORDER BY event_date";
+            $result = $conn->query($query);
+
+            if ($result->num_rows > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    echo "<tr>
+                        <th scope='row'>{$row['event_id']}</th>
+                        <td>{$row['event_name']}</td>
+                        <td>{$row['event_date']}</td>
+                        <td>{$row['event_place']}</td>
+                        <td>{$row['status']}</td>
+                        <td>
+                            <a href='view_event.php?id={$row['event_id']}' class='btn btn-info btn-sm'>View</a>
+                            <a href='edit_event.php?id={$row['event_id']}' class='btn btn-warning btn-sm'>Edit</a>
+                            <a href='delete_event.php?id={$row['event_id']}' class='btn btn-danger btn-sm'>Delete</a>
+                        </td>
+                    </tr>";
+                }
+            } else {
+                echo "<tr><td colspan='6' class='text-center'>No events found</td></tr>";
+            }
+            ?>
         </tbody>
     </table>
     <a href="create_event.php" class="btn btn-primary">Create New Event</a>
 </div>
 
-<?php include("includes/footer.php"); ?>
+<?php 
+$conn->close();
+include("includes/footer.php"); 
+?>

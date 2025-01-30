@@ -1,4 +1,6 @@
-<?php include("includes/header.php") ?>
+<?php 
+    include("includes/header.php");
+?>
 
 <div class="container d-flex justify-content-center align-items-center mt-4">
     <div class="card glass-card border-0 shadow-lg" style="width: 500px;">
