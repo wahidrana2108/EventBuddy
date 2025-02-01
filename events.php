@@ -15,8 +15,9 @@ if (!isset($_SESSION['user_email'])) {
         <div class="card-body p-3">
             <div class="d-flex justify-content-end mb-3">
                 <select id="filter" class="form-select w-auto">
+                    <option value="">Random</option>
                     <option value="name">Sort by Name (A-Z)</option>
-                    <option value="date">Sort by Date</option>
+                    <option value="date">Sort by Name (Z-A)</option>
                 </select>
             </div>
             <table class="table table-hover">
@@ -43,6 +44,7 @@ if (!isset($_SESSION['user_email'])) {
                     FROM events 
                     JOIN users ON events.host_id = users.user_id 
                     LEFT JOIN event_enrollments ON events.event_id = event_enrollments.event_id 
+                    WHERE events.status != 'Cancelled'
                     GROUP BY events.event_id, events.event_name, users.first_name, users.last_name, events.capacity, events.event_date";
                     
                     $result = $conn->query($sql);
@@ -77,6 +79,14 @@ if (!isset($_SESSION['user_email'])) {
 <script>
     const events = <?php echo json_encode($events); ?>;
 
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
     document.getElementById('filter').addEventListener('change', function () {
         const filterValue = this.value;
         let sortedEvents;
@@ -84,7 +94,9 @@ if (!isset($_SESSION['user_email'])) {
         if (filterValue === 'name') {
             sortedEvents = events.sort((a, b) => a.event_name.localeCompare(b.event_name));
         } else if (filterValue === 'date') {
-            sortedEvents = events.sort((a, b) => new Date(a.event_date) - new Date(b.event_date));
+            sortedEvents = events.sort((a, b) => b.event_name.localeCompare(a.event_name));
+        } else {
+            sortedEvents = shuffleArray(events.slice());
         }
 
         const tableBody = document.getElementById('eventsTable');

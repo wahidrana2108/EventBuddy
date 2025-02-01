@@ -45,6 +45,8 @@ $event_name = $event['event_name'];
 $location = $event['event_place'];
 $max_capacity = $event['capacity'];
 $status = $event['status'];
+$event_date = $event['event_date'];
+$event_description = $event['event_description'];
 
 // Fetch enrollment count
 $enrollmentQuery = "SELECT COUNT(*) as enrolled FROM event_enrollments WHERE event_id = ?";
@@ -86,13 +88,18 @@ $stmt->close();
         </div>
         <div class="card-body p-3">
             <p><strong>Event:</strong> <?php echo htmlspecialchars($event_name, ENT_QUOTES, 'UTF-8'); ?></p>
+            <p><strong>Date:</strong> <?php echo date('Y-m-d', strtotime($event_date))?></p>
             <p><strong>Location:</strong> <?php echo htmlspecialchars($location, ENT_QUOTES, 'UTF-8'); ?></p>
             <p><strong>Enrolled:</strong> <?php echo $enrolled; ?> / <?php echo $max_capacity; ?></p>
             <p><strong>Remaining:</strong> <?php echo $remaining; ?></p>
+            <p><strong>Details:</strong> <?php echo htmlspecialchars($event_description, ENT_QUOTES, 'UTF-8'); ?></p>
             <div class="d-flex align-items-center mb-3">
                 <p><strong>Event Status:</strong> <?php echo htmlspecialchars($status, ENT_QUOTES, 'UTF-8'); ?></p>
                 <?php if ($is_enrolled): ?>
-                    <button class="btn btn-success ms-2" disabled>Already Enrolled</button>
+                    <form method="POST" action="">
+                        <input type="hidden" name="event_id" value="<?php echo $event_id; ?>">
+                        <button type="submit" name="unenroll" class="btn btn-danger ms-2">Unenroll</button>
+                    </form>
                 <?php elseif ($remaining > 0 && $status === 'Running'): ?>
                     <form method="POST" action="">
                         <input type="hidden" name="event_id" value="<?php echo $event_id; ?>">
@@ -126,6 +133,20 @@ if (isset($_POST['enroll'])) {
         echo "<script>alert('You have successfully enrolled in the event.'); window.location.href='event_details.php?id=$event_id';</script>";
     } else {
         echo "<script>alert('Failed to enroll in the event. Please try again.'); window.location.href='event_details.php?id=$event_id';</script>";
+    }
+} elseif (isset($_POST['unenroll'])) {
+    $event_id = intval($_POST['event_id']);
+
+    // Unenroll user from the event
+    $unenrollQuery = "DELETE FROM event_enrollments WHERE event_id = ? AND user_id = ?";
+    $stmt = $conn->prepare($unenrollQuery);
+    $stmt->bind_param("ii", $event_id, $user_id);
+    $stmt->execute();
+    
+    if ($stmt->affected_rows > 0) {
+        echo "<script>alert('You have successfully unenrolled from the event.'); window.location.href='event_details.php?id=$event_id';</script>";
+    } else {
+        echo "<script>alert('Failed to unenroll from the event. Please try again.'); window.location.href='event_details.php?id=$event_id';</script>";
     }
 
     $stmt->close();

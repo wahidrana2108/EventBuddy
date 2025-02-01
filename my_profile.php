@@ -25,7 +25,7 @@ $user_query->close();
         </div>
         <div class="card-body p-3">
             <h5 class="mb-3">Profile Details</h5>
-            <p><img src="<?php echo htmlspecialchars($user_dp, ENT_QUOTES, 'UTF-8'); ?>" alt="Profile Picture" class="img-thumbnail" style="width: 100px;"></p>
+            <p><img src="img/users/<?php echo htmlspecialchars($user_dp, ENT_QUOTES, 'UTF-8'); ?>" alt="Profile Picture" class="img-thumbnail" style="width: 100px;"></p>
             <p><strong>Full Name:</strong> <?php echo htmlspecialchars($first_name . ' ' . $last_name, ENT_QUOTES, 'UTF-8'); ?></p>
             <p><strong>Email:</strong> <?php echo htmlspecialchars($user_email, ENT_QUOTES, 'UTF-8'); ?></p>
             <p><strong>Phone Number:</strong> <?php echo htmlspecialchars($user_phn, ENT_QUOTES, 'UTF-8'); ?></p>

@@ -122,3 +122,32 @@ body {
         display: none;
     }
 }
+
+.search-results {
+    max-height: 400px;
+    overflow-y: auto;
+    background: rgba(0, 0, 0, 0.9);
+    border: 1px solid #343a40;
+    border-radius: 0.5rem;
+    z-index: 1000; /* Make sure it appears on top */
+}
+
+.search-results .list-group-item {
+    padding: 15px 20px;
+    border: none;
+    border-bottom: 1px solid #343a40;
+    transition: background-color 0.3s ease;
+}
+
+.search-results .list-group-item:last-child {
+    border-bottom: none;
+}
+
+.search-results .list-group-item:hover {
+    background-color: #e5e6e7;
+}
+
+.search-results .bi-arrow-right-circle-fill {
+    font-size: 1.2rem;
+    color: #f8f9fa;
+}

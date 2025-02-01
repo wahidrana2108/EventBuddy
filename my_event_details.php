@@ -29,6 +29,7 @@ $event_name = $event['event_name'];
 $location = $event['event_place'];
 $max_capacity = $event['capacity'];
 $status = $event['status'];
+$event_description = $event['event_description'];
 $date = new DateTime($event['event_date']);
 $formattedDate = $date->format('Y-m-d');
 
@@ -64,10 +65,11 @@ $conn->close();
         <div class="card-body p-3">
             <form id="updateEventForm" method="POST" action="update_event.php?id=<?php echo $event_id; ?>">
                 <p><strong>Event:</strong> <?php echo htmlspecialchars($event_name, ENT_QUOTES, 'UTF-8'); ?></p>
+                <p><strong>Date:</strong> <?php echo $formattedDate; ?></p>
                 <p><strong>Location:</strong> <?php echo htmlspecialchars($location, ENT_QUOTES, 'UTF-8'); ?></p>
                 <p><strong>Enrolled:</strong> <?php echo $enrolled; ?> / <?php echo $max_capacity; ?></p>
                 <p><strong>Remaining:</strong> <?php echo $remaining; ?></p>
-                <p><strong>Date:</strong> <?php echo $formattedDate; ?></p>
+                <p><strong>Deatils:</strong> <?php echo htmlspecialchars($event_description, ENT_QUOTES, 'UTF-8'); ?></p>
                 
                 <div class="d-flex align-items-center mb-2">
                     <div class="me-2">
@@ -159,7 +161,7 @@ $conn->close();
     holdButton.addEventListener('click', function() {
         let newStatus = '';
         if (eventStatus.textContent === 'Hold') {
-            newStatus = 'Run';
+            newStatus = 'Running';
         } else {
             newStatus = 'Hold';
         }
@@ -181,7 +183,7 @@ $conn->close();
     cancelButton.addEventListener('click', function() {
         let newStatus = '';
         if (eventStatus.textContent === 'Cancelled') {
-            newStatus = 'Run';
+            newStatus = 'Running';
         } else {
             newStatus = 'Cancelled';
         }

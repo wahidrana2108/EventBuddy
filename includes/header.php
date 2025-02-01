@@ -1,31 +1,35 @@
 <?php
-    include("includes/db.php");
-    session_start();
-
-    function getRealIpUser(){
-        switch(true){    
-                case(!empty($_SERVER['HTTP_X_REAL_IP'])) : return $_SERVER['HTTP_X_REAL_IP'];
-                case(!empty($_SERVER['HTTP_CLIENT_IP'])) : return $_SERVER['HTTP_CLIENT_IP'];
-                case(!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) : return $_SERVER['HTTP_X_FORWARDED_FOR'];
-                
-                default : return $_SERVER['REMOTE_ADDR'];
-        }
+include("includes/db.php");
+session_start();
+function getRealIpUser(){
+    switch(true){    
+        case(!empty($_SERVER['HTTP_X_REAL_IP'])) : return $_SERVER['HTTP_X_REAL_IP'];
+        case(!empty($_SERVER['HTTP_CLIENT_IP'])) : return $_SERVER['HTTP_CLIENT_IP'];
+        case(!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) : return $_SERVER['HTTP_X_FORWARDED_FOR'];
+        
+        default : return $_SERVER['REMOTE_ADDR'];
     }
+}
 
-    if(isset($_SESSION['user_email'])) {
-        $user_email = $_SESSION['user_email'];
-        $stmt = $conn->prepare("SELECT user_dp FROM users WHERE user_email = ?");
-        $stmt->bind_param("s", $user_email);
-        $stmt->execute();
-        $stmt->bind_result($user_dp);
-        $stmt->fetch();
-        $stmt->close();
-    }
+if(isset($_SESSION['user_email'])) {
+    $user_email = $_SESSION['user_email'];
+    $stmt = $conn->prepare("SELECT user_dp FROM users WHERE user_email = ?");
+    $stmt->bind_param("s", $user_email);
+    $stmt->execute();
+    $stmt->bind_result($user_dp);
+    $stmt->fetch();
+    $stmt->close();
+}
+
+if(isset($_POST['search'])) {
+    $input = $_POST['input'];
+    header("Location: search_result.php?input=$input");
+    exit();
+}
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -36,7 +40,6 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
 </head>
-
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
@@ -59,11 +62,12 @@
                         <a class="nav-link" href="contact.php">Contact</a>
                     </li>
                 </ul>
-                <form action="#" method="GET" class="search-form d-flex">
-                    <input type="text" class="form-control search-input" placeholder="Search...">
-                    <button type="submit" class="btn search-button">
+                <form method="POST" role="search" class="search-form d-flex position-relative">
+                    <input type="text" class="form-control search-input" name="input" id="input" placeholder="Search..." onkeyup="searchFunction()">
+                    <button class="btn search-button" name="search" type="submit">
                         <i class="bi bi-search"></i>
                     </button>
+                    <div class="search-results-container position-absolute w-100 mt-4" id="result"></div>
                 </form>
 
                 <ul class="navbar-nav">
@@ -72,14 +76,12 @@
                             <?php
                                 if(!isset($_SESSION['user_email'])) {
                                     echo'<img src="img/user.png" alt="Profile Picture" class="profile-picture me-2" style="width: 45px; height: 45px; border-radius: 50%;">';
-                                }
-                                else {
+                                } else {
                                     echo'<img src="img/users/'.$user_dp.'" alt="Profile Picture" class="profile-picture me-2" style="width: 45px; height: 45px; border-radius: 50%;">';
                                 }
                             ?>
                             <span></span>
                         </a>
-                        <!-- this part -->
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
                             <?php
                                 if(isset($_SESSION['user_email'])) {
@@ -89,8 +91,7 @@
                                         <li><hr class='dropdown-divider'></li>
                                         <li><a class='dropdown-item' href='logout.php'>Logout</a></li>
                                     ";
-                                }
-                                else {
+                                } else {
                                     echo"
                                         <li><a class='dropdown-item' href='login.php'>Login</a></li>
                                         <li><a class='dropdown-item' href='registration.php'>Register</a></li>
@@ -103,6 +104,6 @@
             </div>
         </div>
     </nav>
-</body>
 
+</body>
 </html>
