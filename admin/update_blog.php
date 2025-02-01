@@ -9,9 +9,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Handle file upload if a new banner is provided
     if (isset($_FILES['blog_bann']) && $_FILES['blog_bann']['error'] == 0) {
         $blog_bann = $_FILES['blog_bann']['name'];
-        $target_dir = "uploads/";
+        $target_dir = "../img/banner/";
         $target_file = $target_dir . basename($blog_bann);
-        move_uploaded_file($_FILES['blog_bann']['tmp_name'], '../img/banner/$target_file');
+        move_uploaded_file($_FILES['blog_bann']['tmp_name'], $target_file);        
     } else {
         // Use the existing banner if no new file is uploaded
         $query = "SELECT blog_bann FROM blogs WHERE blog_id = ?";
