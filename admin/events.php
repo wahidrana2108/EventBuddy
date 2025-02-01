@@ -78,8 +78,6 @@ $result = $conn->query($query);
                         <td>{$row['event_place']}</td>
                         <td>{$row['status']}</td>
                         <td>
-                            <a href='view_event.php?id={$row['event_id']}' class='btn btn-info btn-sm'>View</a>
-                            <a href='edit_event.php?id={$row['event_id']}' class='btn btn-warning btn-sm'>Edit</a>
                             <a href='delete_event.php?id={$row['event_id']}' class='btn btn-danger btn-sm'>Delete</a>
                         </td>
                     </tr>";

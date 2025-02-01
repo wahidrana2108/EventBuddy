@@ -80,7 +80,11 @@ $result = $conn->query($query);
                     echo "<td>" . ($row["active"]==1 ? 'Yes':'No') . "</td>";
                     echo "<td>" . $row["registration_date"] . "</td>";
                     echo "<td>";
-                    echo "<a href='edit_user.php?id=" . $row["user_id"] . "' class='btn btn-warning btn-sm'>Edit</a> ";
+                    if ($row["active"] == 1) {
+                        echo "<a href='deactivate_user.php?id=" . $row["user_id"] . "' class='btn btn-warning btn-sm'>Deactivate</a> ";
+                    } else {
+                        echo "<a href='activate_user.php?id=" . $row["user_id"] . "' class='btn btn-success btn-sm'>Activate</a> ";
+                    }
                     echo "<a href='delete_user.php?id=" . $row["user_id"] . "' class='btn btn-danger btn-sm'>Delete</a>";
                     echo "</td>";
                     echo "</tr>";
@@ -115,7 +119,6 @@ $result = $conn->query($query);
             </ul>
         </nav>
     <?php endif; ?>
-    <a href="create_user.php" class="btn btn-primary">Create New User</a>
 </div>
 
 <?php 
