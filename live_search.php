@@ -30,7 +30,7 @@ if (isset($_POST['input'])) {
         echo "     </div>
               </div>";
     } else {
-        echo "<div class='text-light mt-2 pt-4 mb-4'>No event information found!</div>";
+        echo "<div class='mt-4 pt-4 mb-3 text-danger ps-3'>No event information found!</div>";
     }
 }
 ?>

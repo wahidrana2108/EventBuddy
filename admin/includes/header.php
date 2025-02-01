@@ -22,6 +22,26 @@
     }
 ?>
 
+
+<style>
+    .pagination .page-item .page-link {
+        background-color: #343a40; /* Dark background */
+        color: white; /* White text */
+        border-color: #343a40; /* Dark border */
+    }
+
+    .pagination .page-item.active .page-link {
+        background-color: #212529; /* Darker background for active page */
+        border-color: #212529;
+    }
+
+    .pagination .page-item .page-link:hover {
+        background-color: #495057; /* Dark gray on hover */
+        color: white;
+    }
+
+</style>
+
 <!DOCTYPE html>
 <html lang="en">
 

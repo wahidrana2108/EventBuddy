@@ -13,6 +13,7 @@ $event_id = intval($_GET['id']);
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $newCapacity = $_POST['newCapacity'];
     $newDate = $_POST['eventDate'];
+    $newDetails = $_POST['eventDetails'];
 
     $updateQuery = "UPDATE events SET ";
     $updateParams = [];
@@ -30,6 +31,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $updateTypes .= 's';
     }
 
+    if (!empty($newDetails)) {
+        $updateQuery .= "event_description = ?, ";
+        $updateParams[] = $newDetails;
+        $updateTypes .= 's';
+    }
+
     $updateQuery = rtrim($updateQuery, ', ');
     $updateQuery .= " WHERE event_id = ?";
 
@@ -42,7 +49,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($stmt->execute()) {
         echo "<script>window.location.href='my_event_details.php?id=" . $event_id . "'</script>";
         echo "Event updated successfully.";
-
     } else {
         echo "Error updating event: " . $stmt->error;
     }

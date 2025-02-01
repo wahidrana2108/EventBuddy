@@ -69,7 +69,7 @@ $conn->close();
                 <p><strong>Location:</strong> <?php echo htmlspecialchars($location, ENT_QUOTES, 'UTF-8'); ?></p>
                 <p><strong>Enrolled:</strong> <?php echo $enrolled; ?> / <?php echo $max_capacity; ?></p>
                 <p><strong>Remaining:</strong> <?php echo $remaining; ?></p>
-                <p><strong>Deatils:</strong> <?php echo htmlspecialchars($event_description, ENT_QUOTES, 'UTF-8'); ?></p>
+                <p><strong>Details:</strong> <?php echo htmlspecialchars($event_description, ENT_QUOTES, 'UTF-8'); ?></p>
                 
                 <div class="d-flex align-items-center mb-2">
                     <div class="me-2">
@@ -83,7 +83,11 @@ $conn->close();
                         <input type="date" class="form-control" id="eventDate" name="eventDate" placeholder="dd/mm/yyyy" style="width: 150px;">
                         <div id="eventDateError" class="text-danger mt-1" style="display: none;">Event date must be at least tomorrow.</div>
                     </div>
+                </div>
 
+                <div class="d-flex align-items-center mb-2">
+                    <label for="eventDetails" class="form-label text-muted me-2">Edit Event Details:</label>
+                    <input type="text" class="form-control" id="eventDetails" name="eventDetails" placeholder="Event details" style="width: 300px;">
                     <button type="submit" id="updateButton" class="btn btn-dark ms-2" disabled>Update</button>
                 </div>
             </form>
@@ -94,7 +98,7 @@ $conn->close();
                 <button class="btn btn-danger ms-2" id="cancelButton">Cancel</button>
             </div>
 
-            <h5>Enrolled Users:</h5>
+            <h5>Enrolled Users: <button class="btn btn-primary" id="downloadCSV">Download Info</button></h5>
             <ol>
                 <?php foreach ($enrolled_users as $user): ?>
                     <li><?php echo htmlspecialchars($user['first_name'] . ' ' . $user['last_name'], ENT_QUOTES, 'UTF-8') . " - " . $user['enrollment_date']; ?></li>
@@ -109,6 +113,7 @@ $conn->close();
     const capacityError = document.getElementById('capacityError');
     const eventDateField = document.getElementById('eventDate');
     const eventDateError = document.getElementById('eventDateError');
+    const eventDetailsField = document.getElementById('eventDetails');
     const updateButton = document.getElementById('updateButton');
     const updateEventForm = document.getElementById('updateEventForm');
     const holdButton = document.getElementById('holdButton');
@@ -151,12 +156,14 @@ $conn->close();
     function validateForm() {
         const isCapacityValid = newCapacityField.value === '' || validateCapacity();
         const isDateValid = eventDateField.value === '' || validateDate();
+        const isAnyFieldFilled = newCapacityField.value.trim() !== '' || eventDateField.value.trim() !== '' || eventDetailsField.value.trim() !== '';
         
-        updateButton.disabled = !isCapacityValid || !isDateValid || (newCapacityField.value === '' && eventDateField.value === '');
+        updateButton.disabled = !isCapacityValid || !isDateValid || !isAnyFieldFilled;
     }
 
     newCapacityField.addEventListener('input', validateForm);
     eventDateField.addEventListener('input', validateForm);
+    eventDetailsField.addEventListener('input', validateForm);
 
     holdButton.addEventListener('click', function() {
         let newStatus = '';
@@ -200,6 +207,27 @@ $conn->close();
             }
         };
         xhr.send('event_id=<?php echo $event_id; ?>&status=' + newStatus);
+    });
+</script>
+
+<script>
+    document.getElementById('downloadCSV').addEventListener('click', function () {
+        let csvContent = "data:text/csv;charset=utf-8,";
+        csvContent += "Event Name,Date,Location,Total Seats\n";
+        csvContent += "<?php echo htmlspecialchars($event_name, ENT_QUOTES, 'UTF-8'); ?>,<?php echo $formattedDate; ?>,<?php echo htmlspecialchars($location, ENT_QUOTES, 'UTF-8'); ?>,<?php echo $max_capacity; ?>\n\n";
+        
+        csvContent += "Attendee Name,Enrollment Date\n";
+        <?php foreach ($enrolled_users as $user): ?>
+            csvContent += "<?php echo htmlspecialchars($user['first_name'] . ' ' . $user['last_name'], ENT_QUOTES, 'UTF-8'); ?>,<?php echo $user['enrollment_date']; ?>\n";
+        <?php endforeach; ?>
+        
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "Event_Buddy.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     });
 </script>
 

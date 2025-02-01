@@ -52,7 +52,7 @@
             <div class="col-md-4 text-center">
                 <img src="img/dev.png" alt="Team Member 2" class="rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;">
                 <h5 class="fw-bold">Jane Smith</h5>
-                <p class="text-secondary">Event Manager</p>
+                <p class="text-secondary">Event Buddy</p>
             </div>
             <!-- Team Member 3 -->
             <div class="col-md-4 text-center">

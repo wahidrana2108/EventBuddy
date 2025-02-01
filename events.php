@@ -5,6 +5,37 @@ if (!isset($_SESSION['user_email'])) {
     header("Location: login.php");
     exit();
 }
+
+// Pagination settings
+$limit = 10; 
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$offset = ($page - 1) * $limit;
+
+// Fetch total number of events
+$sql_count = "SELECT COUNT(*) AS total FROM events WHERE status != 'Cancelled'";
+$result_count = $conn->query($sql_count);
+$total_events = $result_count->fetch_assoc()['total'];
+$total_pages = ceil($total_events / $limit);
+
+// Fetching event details with pagination
+$sql = "
+SELECT 
+    events.event_id, 
+    events.event_name, 
+    users.first_name AS host_first_name, 
+    users.last_name AS host_last_name, 
+    events.capacity AS max_capacity, 
+    COUNT(event_enrollments.enrollment_id) AS enrolled, 
+    DATE_FORMAT(events.event_date, '%Y-%m-%d') AS event_date 
+FROM events 
+JOIN users ON events.host_id = users.user_id 
+LEFT JOIN event_enrollments ON events.event_id = event_enrollments.event_id 
+WHERE events.status != 'Cancelled'
+GROUP BY events.event_id, events.event_name, users.first_name, users.last_name, events.capacity, events.event_date
+LIMIT $limit OFFSET $offset";
+
+$result = $conn->query($sql);
+$events = array();
 ?>
 
 <div class="container d-flex justify-content-center align-items-center mt-4">
@@ -31,25 +62,6 @@ if (!isset($_SESSION['user_email'])) {
                 </thead>
                 <tbody id="eventsTable">
                     <?php
-                    // Fetching event details including host and enrollment count
-                    $sql = "
-                    SELECT 
-                        events.event_id, 
-                        events.event_name, 
-                        users.first_name AS host_first_name, 
-                        users.last_name AS host_last_name, 
-                        events.capacity AS max_capacity, 
-                        COUNT(event_enrollments.enrollment_id) AS enrolled, 
-                        DATE_FORMAT(events.event_date, '%Y-%m-%d') AS event_date 
-                    FROM events 
-                    JOIN users ON events.host_id = users.user_id 
-                    LEFT JOIN event_enrollments ON events.event_id = event_enrollments.event_id 
-                    WHERE events.status != 'Cancelled'
-                    GROUP BY events.event_id, events.event_name, users.first_name, users.last_name, events.capacity, events.event_date";
-                    
-                    $result = $conn->query($sql);
-                    $events = array();
-
                     if ($result->num_rows > 0) {
                         while ($row = $result->fetch_assoc()) {
                             $events[] = $row;
@@ -66,15 +78,28 @@ if (!isset($_SESSION['user_email'])) {
                     ?>
                 </tbody>
             </table>
+            
+            <!-- Pagination -->
+            <nav>
+                <ul class="pagination justify-content-center">
+                    <?php if ($page > 1): ?>
+                        <li class="page-item"><a class="page-link" href="?page=<?php echo $page - 1; ?>">Previous</a></li>
+                    <?php endif; ?>
+                    
+                    <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                        <li class="page-item <?php echo ($i == $page) ? 'active' : ''; ?>">
+                            <a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
+                        </li>
+                    <?php endfor; ?>
+                    
+                    <?php if ($page < $total_pages): ?>
+                        <li class="page-item"><a class="page-link" href="?page=<?php echo $page + 1; ?>">Next</a></li>
+                    <?php endif; ?>
+                </ul>
+            </nav>
         </div>
     </div>
 </div>
-
-<style>
-    .table-hover tbody tr:hover {
-        background-color: #f5f5f5;
-    }
-</style>
 
 <script>
     const events = <?php echo json_encode($events); ?>;

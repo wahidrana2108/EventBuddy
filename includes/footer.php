@@ -2,8 +2,8 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-4">
-                    <h5>About Event Manager</h5>
-                    <p>Event Manager is your go-to platform for creating, managing, and participating in exciting events. Whether it's a birthday, anniversary, or office party, we make it easy to bring your ideas to life.</p>
+                    <h5>About Event Buddy</h5>
+                    <p>Event Buddy is your go-to platform for creating, managing, and participating in exciting events. Whether it's a birthday, anniversary, or office party, we make it easy to bring your ideas to life.</p>
                 </div>
                 <div class="col-md-4">
                     <h5>Quick Links</h5>
@@ -19,11 +19,11 @@
                     <ul class="list-unstyled">
                         <li><i class="bi bi-geo-alt-fill"></i> 123 Event Lane, Cityville</li>
                         <li><i class="bi bi-telephone-fill"></i> +8801770888280</li>
-                        <li><i class="bi bi-envelope-fill"></i> info@eventmanager.com</li>
+                        <li><i class="bi bi-envelope-fill"></i> info@eventBuddy.com</li>
                     </ul>
                     <h6 class="mt-3">Follow Us</h6>
                     <div>
-                        <a href="#" class="text-white me-3"><i class="bi bi-facebook"></i></a>
+                        <a href="https://www.facebook.com/wahid.rana.75" class="text-white me-3"><i class="bi bi-facebook"></i></a>
                         <a href="#" class="text-white me-3"><i class="bi bi-twitter"></i></a>
                         <a href="#" class="text-white"><i class="bi bi-instagram"></i></a>
                     </div>
@@ -31,7 +31,7 @@
             </div>
             <hr class="my-4">
             <div class="text-center">
-                <p class="mb-0">&copy; 2025 Event Manager. All Rights Reserved.</p>
+                <p class="mb-0">&copy; 2025 Event Buddy. All Rights Reserved.</p>
             </div>
         </div>
     </footer>

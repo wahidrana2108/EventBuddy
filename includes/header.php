@@ -33,7 +33,7 @@ if(isset($_POST['search'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Event Manager</title>
+    <title>Event Buddy</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
@@ -43,7 +43,7 @@ if(isset($_POST['search'])) {
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
-            <a class="navbar-brand" href="index.php">Event Manager</a>
+            <a class="navbar-brand" href="index.php">Event Buddy</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -63,7 +63,7 @@ if(isset($_POST['search'])) {
                     </li>
                 </ul>
                 <form method="POST" role="search" class="search-form d-flex position-relative">
-                    <input type="text" class="form-control search-input" name="input" id="input" placeholder="Search..." onkeyup="searchFunction()">
+                    <input type="text" class="form-control search-input" name="input" id="input" placeholder="Search Events" onkeyup="searchFunction()">
                     <button class="btn search-button" name="search" type="submit">
                         <i class="bi bi-search"></i>
                     </button>

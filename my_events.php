@@ -18,6 +18,49 @@ $userResult = $stmt->get_result();
 $userData = $userResult->fetch_assoc();
 $user_id = $userData['user_id'];
 
+// Pagination settings
+$limit = 10; // Number of events per page
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$offset = ($page - 1) * $limit;
+
+// Fetch total number of events for the user
+$sql_count = "SELECT COUNT(*) AS total FROM events WHERE host_id = ?";
+$stmt = $conn->prepare($sql_count);
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$result_count = $stmt->get_result();
+$total_events = $result_count->fetch_assoc()['total'];
+$total_pages = ceil($total_events / $limit);
+
+// Sorting filter
+$sort = isset($_GET['sort']) ? $_GET['sort'] : '';
+$orderBy = "event_name ASC";
+if ($sort === 'date') {
+    $orderBy = "event_date DESC";
+} elseif ($sort === 'name') {
+    $orderBy = "event_name ASC";
+}
+
+// Fetching event details with pagination and sorting
+$sql = "
+SELECT 
+    events.event_id, 
+    events.event_name, 
+    events.capacity AS max_capacity, 
+    COUNT(event_enrollments.enrollment_id) AS enrolled, 
+    DATE_FORMAT(events.event_date, '%Y-%m-%d') AS event_date 
+FROM events 
+LEFT JOIN event_enrollments ON events.event_id = event_enrollments.event_id 
+WHERE events.host_id = ?
+GROUP BY events.event_id, events.event_name, events.capacity, events.event_date
+ORDER BY $orderBy
+LIMIT $limit OFFSET $offset";
+
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$result = $stmt->get_result();
+$events = array();
 ?>
 
 <div class="container d-flex justify-content-center align-items-center mt-4">
@@ -26,6 +69,13 @@ $user_id = $userData['user_id'];
             <h3 class="mb-0">My Events</h3>
         </div>
         <div class="card-body p-3">
+            <div class="d-flex justify-content-end mb-3">
+                <select id="filter" class="form-select w-auto">
+                    <option value="">Random</option>
+                    <option value="name" <?php echo ($sort === 'name') ? 'selected' : ''; ?>>Sort by Name (A-Z)</option>
+                    <option value="date" <?php echo ($sort === 'date') ? 'selected' : ''; ?>>Sort by Date (Newest)</option>
+                </select>
+            </div>
             <table class="table table-hover">
                 <thead>
                     <tr>
@@ -37,25 +87,6 @@ $user_id = $userData['user_id'];
                 </thead>
                 <tbody id="eventsTable">
                     <?php
-                    // Fetching event details including host and enrollment count for the logged-in user
-                    $sql = "
-                    SELECT 
-                        events.event_id, 
-                        events.event_name, 
-                        events.capacity AS max_capacity, 
-                        COUNT(event_enrollments.enrollment_id) AS enrolled, 
-                        DATE_FORMAT(events.event_date, '%Y-%m-%d') AS event_date 
-                    FROM events 
-                    LEFT JOIN event_enrollments ON events.event_id = event_enrollments.event_id 
-                    WHERE events.host_id = ?
-                    GROUP BY events.event_id, events.event_name, events.capacity, events.event_date";
-
-                    $stmt = $conn->prepare($sql);
-                    $stmt->bind_param("i", $user_id);
-                    $stmt->execute();
-                    $result = $stmt->get_result();
-                    $events = array();
-
                     if ($result->num_rows > 0) {
                         while ($row = $result->fetch_assoc()) {
                             $events[] = $row;
@@ -73,6 +104,25 @@ $user_id = $userData['user_id'];
                     ?>
                 </tbody>
             </table>
+            
+            <!-- Pagination -->
+            <nav>
+                <ul class="pagination justify-content-center">
+                    <?php if ($page > 1): ?>
+                        <li class="page-item"><a class="page-link" href="?page=<?php echo $page - 1; ?>&sort=<?php echo $sort; ?>">Previous</a></li>
+                    <?php endif; ?>
+                    
+                    <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                        <li class="page-item <?php echo ($i == $page) ? 'active' : ''; ?>">
+                            <a class="page-link" href="?page=<?php echo $i; ?>&sort=<?php echo $sort; ?>"><?php echo $i; ?></a>
+                        </li>
+                    <?php endfor; ?>
+                    
+                    <?php if ($page < $total_pages): ?>
+                        <li class="page-item"><a class="page-link" href="?page=<?php echo $page + 1; ?>&sort=<?php echo $sort; ?>">Next</a></li>
+                    <?php endif; ?>
+                </ul>
+            </nav>
         </div>
     </div>
 </div>
@@ -82,6 +132,14 @@ $user_id = $userData['user_id'];
         background-color: #f5f5f5;
     }
 </style>
+
+<script>
+    document.getElementById('filter').addEventListener('change', function () {
+        const selectedSort = this.value;
+        window.location.href = '?page=1&sort=' + selectedSort;
+    });
+</script>
+
 
 <script>
     function calculateRemainingDays(eventDate) {
