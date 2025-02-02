@@ -13,7 +13,7 @@
 <!-- Hero Section -->
 <section class="hero-section text-center py-5">
     <div class="container">
-        <h1>Welcome to EventHub</h1>
+        <h1>Welcome to Event Buddy</h1>
         <p>Your one-stop platform for managing and discovering exciting events.</p>
         <a href="events.php" class="btn btn-secondary">Get Started</a>
     </div>

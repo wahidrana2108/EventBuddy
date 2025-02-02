@@ -85,6 +85,10 @@ $result = $conn->query($query);
             ?>
         </tbody>
     </table>
+    <div class="mb-3">
+        <a href="create_blog.php" class="btn btn-dark">Create New Blog</a>
+    </div>
+
 
     <?php if ($total_pages > 1): ?>
         <nav>
@@ -107,6 +111,7 @@ $result = $conn->query($query);
                     </li>
                 <?php endif; ?>
             </ul>
+            
         </nav>
     <?php endif; ?>
 </div>

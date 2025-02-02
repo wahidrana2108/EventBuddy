@@ -70,6 +70,9 @@
                         <a class="nav-link" href="events.php">Events</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="blogs.php">Blogs</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="users.php">Users</a>
                     </li>
                     <li class="nav-item">
